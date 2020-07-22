@@ -1,5 +1,6 @@
 # python-modules
 python helper modules &amp; scripts
+See the wiki page for details on what is included in this repository.
 
 Your use of this Software is pursuant to the Silver Peak Disclaimer below.
 

@@ -1,3 +1,11 @@
+#
+# sp_orchhelper.py - basic Orchestrator helper class that includes functions to facilitate login, logout, and issue REST GET/POST/DELETE/PUT calls over a session
+# 
+# Your use of this Software is pursuant to the Silver Peak Disclaimer (see the README file for this repository)
+# 
+# Last update: Jul 2020
+#
+
 import requests
 
 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- Your use of this Software is pursuant to the Silver Peak Disclaimer - see the README file for this repository -->
+
+<html>
+
+<head>
+    <title>WebSocket Playground</title>
+</head>
+<button onclick="requestActiveAlarm()">Request Active Alarm</button>
+<br><br>
+<button onclick="requestAlarmByIds()">Resubmission By ID</button>
+<br><br>
+<button onclick="closeConnection()">Close Connection</button>
+
+
+<body>
+</body>
+<script>
+    var ws = null;
+
+    /**
+     * Update these variables for your own test
+     * @type {string}
+     *  ipOrDNS: ip address or FQDN of Orchestrator. ipOrDNS should not contain the https:// prefix.
+     *  key: key that Orchestrator generates after websocket server is configured
+     *  receiverId: id of websocket remote log receiver created on Orchestrator (integer)
+     */
+    var ipOrDNS = "www.example.com";
+    var key = ""
+    var receiverId = NULL;
+
+    //used for specifying esubmission of specific notifications by seq ids
+    var ids = ["2", "3", "4-6"];
+
+
+    ws = new WebSocket(`wss://${ipOrDNS}/remoteLogWebSocket/${receiverId}?key=${key}`);
+    ws.onopen = function () {
+        console.log('WS1: WebSocket Client Connected');
+        ws.send('WS1: Hi this is browser ws client.');
+    };
+    ws.onmessage = function (e) {
+        console.log("WS1: Received: ");
+        console.log(JSON.parse(e.data));
+    };
+    ws.onclose = function () {
+        console.log("WS1: socket closed");
+    };
+
+    function requestActiveAlarm() {
+        if (ws != null) {
+            var req = {
+                action: "ACTIVE_ALARMS"
+            }
+            ws.send(JSON.stringify(req));
+            console.log(`Send request to ws, ${JSON.stringify(req)}`);
+        }
+    }
+
+    function requestAlarmByIds() {
+        //Modify the seqId here to fetch alarm
+        if (ws != null) {
+            var req = {
+                action: "RESUBMISSION",
+                type: "SEQUENCE_ID",
+                data: JSON.stringify(ids)
+            }
+            ws.send(JSON.stringify(req));
+            console.log(`Send request to ws, ${JSON.stringify(req)}`);
+        }
+    }
+
+    function closeConnection() {
+        if (ws != null) {
+            ws.close();
+        }
+    }
+</script>
+
+</html>

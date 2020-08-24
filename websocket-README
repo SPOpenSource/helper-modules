@@ -1,0 +1,56 @@
+Connecting to the Silver Peak Orchestrator Notification Service via Websockets
+
+The Silver Peak Orchestrator Notification Service supports multiple different transport options.
+The websockets option allows subscribers to initiate a websocket request to Orchestrator, over
+which alarms or audit log messages can be streamed.  To set up this service, users must first
+configure a new Remote Log Receiver on Orchestrator with the websocket option.
+
+Once the websocket server is configured on Orchestrator, the client/subscriber can initiate a secure connection to the websocket-based remote log receiver, using the unique URL associated with that websocket server and a unique receiver ID that is generate when the server is initially configured. The client opens up a websocket to an address structured as below:
+
+    wss://<OrchIPorDNS>/remoteLogWebSocket/{receiverId}
+
+Once the session is created, alarms start streaming over that session. Since the connection is initiated, often from behindthe firewall, the alarms are allowed in, provided the firewall is stateful.  These alarms are JSON formatted and contain the same information as the other alarm streaming methods supported by Orchestrator Notification Services.
+
+Secure connectivity is further enhanced by a unique authentication token that is generated when the websocket receiver is first created. This token is required when the client initiates the session, and must be submitted as part of the websocket open request. It is recommended that the token be sent in the HTTP request via the “X-Auth-Token” header, but as an alternative, it can also be sent as a query parameter in the URL. Validation of the token is performed prior to the Orchestrator Notification Service accepting the connection request.
+ 
+The websocket remote log receiver can also be optionally configured with an IP permit-list – if no IP is specified, any client can connect to the websocket. 
+However, if an IP list is provided, the client opening the websocket to Orchestrator Notification Service is validated against the whitelist.   
+
+The files provided here are sample code segments illustrating how a client can connect to Orchestrator
+Notification Service via a websocket.  The code performs 3 functions:
+1.Tests connection to orchestrator remote log websocket and monitors receiving alarm/auditlog events.
+2.Tests resubmission request for active alarms (click "Request Active Alarm" button on browser page)
+3.Tests resubmission request for specific missing alarms, using sequence ids (click "Resubmission By ID" button on browser page)
+
+One additional action that can be requested is a request for the latest sequence ID for that websocket session. The JSON request for this action is not in the client code,
+and is shown below:
+    {
+         action: "LATEST_SEQ_ID",
+         type: NULL,
+         data: NULL
+    }
+
+How to use the sample browser client code
+    A.Create a new file on the hostand name it as client.html
+    B.Copy the code in this websocket_client.html file to the new file and change the variables for your specific environment.
+        - ipOrDNS: the IP address or FQDN of your Orchestrator
+        - receiverId: the id of the websocket server that is configured on Orchestrator (see the UI). This is an integer.
+        - key: the websocket key generated for your receiver (this can be copied from the UI)
+        - ids: if you want to test the resubmit action, change this array to include valid sequence ids and/or ranges.
+    C.Save the file
+    D.Test the code and websocket commands
+        - Open the client.html file in Chrome and open the Chrome dev-tool, click on Tab menu "Console". THis is where alarms will be displayed.
+        - The browser will execute the script and connect to the specified Orchestrator websocket when page is loaded
+        - The buttons on the HTML page can be used to send requests via websocket
+        - The console will display incoming message and also the results of any requests sent by the client over the websocket
+
+Adding HTTP header in websocket handshake request cannot easily done in previous browser client so we use node.js to do that. This client is mainly for testing authentication with key included in the http header.
+
+How to use the sample node.js code
+Install node.js and npm
+$ mkdir client
+$ npm init //press Enter to the end
+$ npm install --save ws
+$ touch app.js //copy the code from websocket_nodeClient.js to app.js
+modify ipOrDNS, receiverId and key for your test
+$ node app.js //run client to connect to orchestrator websocket

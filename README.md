@@ -1,5 +1,5 @@
 # helper-modules
-General helper modules, scripts, and client code.
+General helper modules, scripts, and client code that leverage the Silver Peak Orchestrator API.
 See the WIKI page for this repository for details about the available modules.
 
 *IMPORTANT*:  Your use of this Software is pursuant to the Silver Peak Disclaimer below.

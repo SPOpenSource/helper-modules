@@ -18,17 +18,34 @@ However, if an IP list is provided, the client opening the websocket to Orchestr
 
 The files provided here are sample code segments illustrating how a client can connect to Orchestrator
 Notification Service via a websocket.  The code performs 3 functions:
-1.Tests connection to orchestrator remote log websocket and monitors receiving alarm/auditlog events.
-2.Tests resubmission request for active alarms (click "Request Active Alarm" button on browser page)
-3.Tests resubmission request for specific missing alarms, using sequence ids (click "Resubmission By ID" button on browser page)
+   1.Tests connection to orchestrator remote log websocket and monitors receiving alarm/auditlog events.
+   2.Tests resubmission request for active alarms (click "Request Active Alarm" button on browser page)
+   3.Tests resubmission request for specific missing alarms, using sequence ids (click "Resubmission By ID" button on browser page)
 
-One additional action that can be requested is a request for the latest sequence ID for that websocket session. The JSON request for this action is not in the client code,
+To request the latest sequence ID for that websocket session. The JSON request for this action is not in the client code,
 and is shown below:
-    {
-         action: "LATEST_SEQ_ID",
-         type: NULL,
-         data: NULL
-    }
+{
+     action: "LATEST_SEQ_ID",
+     type: NULL,
+     data: NULL
+}
+
+To request the currently active alarms, the request JSON object is represented as:
+{
+    action: "ACTIVE_ALARMS",
+    type: NULL,
+    data: NULL
+}
+When this action is requested, the current alarm stream is paused until the set of currently active alarms is sent. Currently active alarms have a sequence ID of “-1”.
+
+To request missing alarms by sequence IDs, the JSON object is represented as:
+{
+    action: "RESUBMISSION",
+    type: "SEQUENCE_ID",
+    data: "[\"1\",\"2\",\"4-6\",\"7-LATEST\"]"
+}
+where “data” is a stringified list of of sequence IDs and/or range of sequence IDs.  Eg, [“2”, “4-6”]. When this action is requested, the missing alarms are sent along with the current alarm stream.  LATEST is provided as a means to send all alarms from the starting sequenceId up to the current sequenceId.
+
 
 How to use the sample browser client code
     A.Create a new file on the hostand name it as client.html

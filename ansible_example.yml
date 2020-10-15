@@ -42,7 +42,7 @@
 - name: Get Sample
   uri:
           validate_certs: # (yes/no)
-          url:  "https://{{ orchip }}/gms/rest/{{ get.url }}"
+          url:  "https://{{ orchip }}/gms/rest/{{ get_url }}"
           body_format: json
           return_content: yes
           method: GET
@@ -54,15 +54,16 @@
 
 
 # Sample POST function, requires Orchestrator URL, POST URL (shown as variable), and {{ orch }}
+# NOTE: for error handling, POST STATUS may be returned as 200 or 204, either hardcode or leverage variable accordingly
 
 - name: Post Sample
   uri:
           validate_certs: # (yes/no)
-          url:  "https://{{ orchip }}/gms/rest/{{ post.url }}"
+          url:  "https://{{ orchip }}/gms/rest/{{ post_url }}"
           body: "{{ contents }}"
           body_format: json
           return_content: yes
-          status_code: "{{ post.status }}"
+          status_code: "{{ post_status }}"
           method: POST
           headers:
                   Content-Type: "application/json"
@@ -76,7 +77,7 @@
 - name: Put Sample
   uri:
           validate_certs: # (yes/no)
-          url:  "https://{{ orchip }}/gms/rest/{{ put.url }}"
+          url:  "https://{{ orchip }}/gms/rest/{{ put_url }}"
           body: "{{ contents }}"
           body_format: json
           return_content: yes

@@ -124,6 +124,25 @@ class OrchHelper:
             print ("{0}: unable to get appliance list: {1}".format(self.url, r.text))
             return []
 
+    def get_all_preconfig(self):
+        # GET operation to retrieve list of preconfigs
+        # JSON response is a list object
+        response = self.get("/gms/appliance/preconfiguration?filter=metadata")
+        if response.status_code == 200:
+            return response
+        else:
+            print("Failed to retrieve preconfig metadata from Orch at {0}".format(self.ipaddress))
+            return False
+
+    def delete_preconfig(self, pcid):
+        # DELETE operation to delete specific preconfig by preconfig id number (pcid)
+        response = self.delete("/gms/appliance/preconfiguration/" + pcid)
+        if response.status_code == 200:
+            return True
+        else:
+            print("Failed to delete preconfig id:{0} from Orch at {1}".format(pcid,self.ipaddress))
+            return False
+        
 # sample test code - only applies if this module is run as main
 # this tests:
 #   instantiation of an OrchHelper class
